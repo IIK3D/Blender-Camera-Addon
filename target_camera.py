@@ -4,18 +4,18 @@ mail@jlucke.com
 
 Created by Jacques Lucke
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import bpy, math
@@ -83,9 +83,8 @@ def insertTargetCamera():
 	camera.parent = wiggle;
 	
 	distanceEmpty.location.z = 4
-	
 	setActive(camera)
-	bpy.context.object.data.dof_object = focus
+	bpy.context.object.data.dof.focus_object = focus
 	
 	insertWiggleConstraint(wiggle, strongWiggle, dataEmpty)
 	
@@ -108,37 +107,37 @@ def newCamera():
 	
 def newFocusEmpty():
 	focus = newEmpty(name = focusEmptyName, location = [0, 0, 0])
-	focus.empty_draw_size = 0.2
+	focus.empty_display_size = 0.2
 	makePartOfTargetCamera(focus)
-	focus.hide = True
+	focus.hide_viewport = True
 	return focus
 	
 def newMovementEmpty():
 	movement = newEmpty(name = movementEmptyName, location = [0, 0, 0])
-	movement.empty_draw_size = 0.2
+	movement.empty_display_size = 0.2
 	makePartOfTargetCamera(movement)
-	movement.hide = True
+	movement.hide_viewport = True
 	return movement
 	
 def newDistanceEmpty():
 	distanceEmpty = newEmpty(name = distanceEmptyName, location = [0, 0, 0])
-	distanceEmpty.empty_draw_size = 0.2
+	distanceEmpty.empty_display_size = 0.2
 	makePartOfTargetCamera(distanceEmpty)
-	distanceEmpty.hide = True
+	distanceEmpty.hide_viewport = True
 	return distanceEmpty
 
 def newStrongWiggleEmpty():
 	strongWiggle = newEmpty(name = strongWiggleEmptyName, location = [0, 0, 0])
-	strongWiggle.empty_draw_size = 0.2
+	strongWiggle.empty_display_size = 0.2
 	makePartOfTargetCamera(strongWiggle)
-	strongWiggle.hide = True
+	strongWiggle.hide_viewport = True
 	return strongWiggle
 	
 def newWiggleEmpty():
 	wiggle = newEmpty(name = wiggleEmptyName, location = [0, 0, 0])
-	wiggle.empty_draw_size = 0.2
+	wiggle.empty_display_size = 0.2
 	makePartOfTargetCamera(wiggle)
-	wiggle.hide = True
+	wiggle.hide_viewport = True
 	return wiggle
 
 def newDataEmpty():
@@ -148,14 +147,14 @@ def newDataEmpty():
 	setCustomProperty(dataEmpty, wiggleStrengthPropertyName, 0.0, min = 0.0, max = 1.0, description = "Higher values result in more wiggle.")
 	setCustomProperty(dataEmpty, wiggleScalePropertyName, 5.0, min = 1.0, description = "Higher values result in a slower wiggle.")
 	setCustomProperty(dataEmpty, inertiaStrengthPropertyName, 0.0, min = 0.0, description = "Set how far the camera will overshoot the targets.")
-	dataEmpty.hide = True
+	dataEmpty.hide_viewport = True
 	lockCurrentTransforms(dataEmpty)
 	makePartOfTargetCamera(dataEmpty)
 	return dataEmpty
 	
 def newAnimationDataEmpty():
 	animationData = newEmpty(name = animationDataName, location = [0, 0, 0])
-	animationData.empty_draw_size = 0.1
+	animationData.empty_display_size = 0.1
 	setCustomProperty(animationData, travelPropertyName, 1.0, description = "Create your keyframes here. Keyframe handles have no impact in the animation. -> Look into 'Slow In' and 'Slow Out'.")
 	makePartOfTargetCamera(animationData)
 	return animationData
@@ -221,11 +220,11 @@ def removeAnimation():
 	
 def createInertiaEmpties(target, targetBefore):
 	base = newEmpty(name = "base", type = "SPHERE")
-	base.empty_draw_size = 0.15
+	base.empty_display_size = 0.15
 	emptyAfter = newEmpty(name = "after inertia")
-	emptyAfter.empty_draw_size = 0.1
+	emptyAfter.empty_display_size = 0.1
 	emptyBefore = newEmpty(name = "before inertia")
-	emptyBefore.empty_draw_size = 0.1
+	emptyBefore.empty_display_size = 0.1
 	
 	setParentWithoutInverse(base, target)
 	setParentWithoutInverse(emptyAfter, target)
@@ -239,9 +238,9 @@ def createInertiaEmpties(target, targetBefore):
 	createPositionConstraint(emptyBefore, target, targetBefore, negate = True)
 	setBaseBetweenInertiaEmpties(base, emptyAfter, emptyBefore)
 	
-	base.hide = True
-	emptyAfter.hide = True
-	emptyBefore.hide = True
+	base.hide_viewport = True
+	emptyAfter.hide_viewport = True
+	emptyBefore.hide_viewport = True
 	return base
 	
 def createPositionConstraint(object, target, before, negate = False):
@@ -395,12 +394,12 @@ def createInertiaAnimation(dataEmpty, inertiaBases):
 			keyframe.period = 7
 			
 def reHideUnneededObjects():
-	getDataEmpty().hide = True
-	getFocusEmpty().hide = True
-	getMovementEmpty().hide = True
-	getDistanceEmpty().hide = True
-	getStrongWiggleEmpty().hide = True
-	getWiggleEmpty().hide = True
+	getDataEmpty().hide_viewport = True
+	getFocusEmpty().hide_viewport = True
+	getMovementEmpty().hide_viewport = True
+	getDistanceEmpty().hide_viewport = True
+	getStrongWiggleEmpty().hide_viewport = True
+	getWiggleEmpty().hide_viewport = True
 	
 		
 
@@ -463,7 +462,7 @@ def newRealTarget(target):
 	bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY')
 
 	empty = newEmpty(name = realTargetPrefix, location = [0, 0, 0], type = "SPHERE")
-	empty.empty_draw_size = 0.2
+	empty.empty_display_size = 0.2
 	setParentWithoutInverse(empty, target)
 	
 	setCustomProperty(empty, loadingTimePropertyName, 25, min = 1, description = "Frames needed to move to this target.")
@@ -557,7 +556,7 @@ def selectTargetCamera():
 	camera = getTargetCamera()
 	if camera:
 		deselectAll()
-		camera.select = True
+		camera.select_set(True)
 		setActive(camera)
 def selectMovementEmpty():
 	deselectAll()
@@ -701,196 +700,3 @@ def openDopeSheet():
 	
 
 		
-# interface
-#############################
-
-class TargetCameraPanel(bpy.types.Panel):
-	bl_space_type = "VIEW_3D"
-	bl_region_type = "TOOLS"
-	bl_category = "Sniper"
-	bl_label = "Sniper"
-	bl_context = "objectmode"
-	
-	@classmethod
-	def poll(self, context):
-		return targetCameraSetupExists()
-	
-	def draw(self, context):		
-		layout = self.layout
-		
-		camera = getTargetCamera()
-		movement = getMovementEmpty()
-		dataEmpty = getDataEmpty()
-		targetList = getTargetList()
-		
-		col = layout.column(align = True)
-		col.operator("sniper.recalculate_animation", text = "Recalculate", icon = "ACTION_TWEAK")
-		col.operator("sniper.open_dope_sheet", text = "Manipulate Timing", icon = "ACTION")
-			
-		row = layout.row(align = True)
-		row.operator("sniper.go_to_previous_target", icon = 'TRIA_LEFT', text = "")
-		row.label("Travel: " + str(getTravelValue()))
-		row.operator("sniper.go_to_next_target", icon = 'TRIA_RIGHT', text = "")
-		
-		box = layout.box()
-		col = box.column(align = True)
-		
-		for i in range(len(targetList)):
-			row = col.split(percentage=0.6, align = True)
-			row.scale_y = 1.35
-			name = row.operator("sniper.select_target", getTargetObjectFromTarget(targetList[i]).name)
-			name.currentIndex = i
-			up = row.operator("sniper.move_target_up", icon = 'TRIA_UP', text = "")
-			up.currentIndex = i
-			down = row.operator("sniper.move_target_down", icon = 'TRIA_DOWN', text = "")
-			down.currentIndex = i
-			delete = row.operator("sniper.delete_target", icon = 'X', text = "")
-			delete.currentIndex = i
-			if useListSeparator: col.separator()
-		box.operator("sniper.new_target_object", icon = 'PLUS')
-		
-		selectedTargets = getSelectedTargets(targetList)
-		selectedTargets.reverse()
-		for target in selectedTargets:
-			box = layout.box()
-			box.label(target.parent.name + "  (" + str(targetList.index(target) + 1) + ")")
-			
-			col = box.column(align = True)
-			col.prop(target, slowInDataPath, slider = False, text = "Ease In")
-			col.prop(target, slowOutDataPath, slider = False, text = "Ease Out")
-			copyToAll = col.operator("sniper.copy_interpolation_properties_to_all", text = "Copy to All", icon = "COPYDOWN")
-			copyToAll.currentIndex = targetList.index(target)			
-			
-		col = layout.column(align = True)
-		col.label("Camera Wiggle")
-		col.prop(dataEmpty, wiggleStrengthDataPath, text = "Strength")
-		col.prop(dataEmpty, wiggleScaleDataPath, text = "Time Scale")
-		
-		layout.prop(dataEmpty, '["'+ inertiaStrengthPropertyName +'"]', text = "Inertia Strength")
-		
-		if getCurrentSettingsHash() != oldHash:
-			layout.label("You should recalculate the animation", icon = 'ERROR')
-		
-	
-# operators
-#############################
-		
-class AddTargetCamera(bpy.types.Operator):
-	bl_idname = "sniper.insert_target_camera"
-	bl_label = "Add Target Camera"
-	bl_description = "Create new active camera and create targets from selection."
-	
-	@classmethod
-	def poll(self, context):
-		return not targetCameraSetupExists()
-		
-	def execute(self, context):
-		insertTargetCamera()
-		return{"FINISHED"}
-		
-class SetupTargetObject(bpy.types.Operator):
-	bl_idname = "sniper.new_target_object"
-	bl_label = "New Targets From Selection"
-	bl_description = "Use selected objects as targets."
-	
-	def execute(self, context):
-		newTargetsFromSelection()
-		return{"FINISHED"}
-		
-class DeleteTargetOperator(bpy.types.Operator):
-	bl_idname = "sniper.delete_target"
-	bl_label = "Delete Target"
-	bl_description = "Delete the target from the list."
-	currentIndex = bpy.props.IntProperty()
-	
-	def execute(self, context):
-		deleteTarget(self.currentIndex)
-		return{"FINISHED"}
-		
-class RecalculateAnimationOperator(bpy.types.Operator):
-	bl_idname = "sniper.recalculate_animation"
-	bl_label = "Recalculate Animation"
-	bl_description = "Regenerates most of the constraints, drivers and keyframes."
-	
-	def execute(self, context):
-		createFullAnimation(getTargetList())
-		return{"FINISHED"}
-		
-class MoveTargetUp(bpy.types.Operator):
-	bl_idname = "sniper.move_target_up"
-	bl_label = "Move Target Up"
-	currentIndex = bpy.props.IntProperty()
-	
-	def execute(self, context):
-		moveTargetUp(self.currentIndex)
-		return{"FINISHED"}
-		
-class MoveTargetDown(bpy.types.Operator):
-	bl_idname = "sniper.move_target_down"
-	bl_label = "Move Target Down"
-	currentIndex = bpy.props.IntProperty()
-	
-	def execute(self, context):
-		moveTargetDown(self.currentIndex)
-		return{"FINISHED"}		
-		
-class SelectTarget(bpy.types.Operator):
-	bl_idname = "sniper.select_target"
-	bl_label = "Select Target"
-	bl_description = "Select that target."
-	currentIndex = bpy.props.IntProperty()
-	
-	def execute(self, context):
-		selectTarget(self.currentIndex)
-		return{"FINISHED"}
-
-class GoToNextTarget(bpy.types.Operator):		
-	bl_idname = "sniper.go_to_next_target"
-	bl_label = "Go To Next Target"
-	bl_description = "Change frame to show next target."
-	
-	def execute(self, context):
-		goToNextTarget()
-		return{"FINISHED"}
-		
-class GoToPreviousTarget(bpy.types.Operator):		
-	bl_idname = "sniper.go_to_previous_target"
-	bl_label = "Go To Previous Target"
-	bl_description = "Change frame to show previous target."
-	
-	def execute(self, context):
-		goToPreviousTarget()
-		return{"FINISHED"}
-		
-class CopyInterpolationPropertiesToAll(bpy.types.Operator):
-	bl_idname = "sniper.copy_interpolation_properties_to_all"
-	bl_label = "Copy Interpolation Properties"
-	bl_description = "All targets will have these interpolation values."
-	currentIndex = bpy.props.IntProperty()
-	
-	def execute(self, context):
-		copyInterpolationProperties(self.currentIndex)
-		return{"FINISHED"}
-		
-class OpenDopeSheet(bpy.types.Operator):
-	bl_idname = "sniper.open_dope_sheet"
-	bl_label = "Open Dope Sheet"
-	bl_description = "Open dope sheet to manipulate the timing."
-	
-	@classmethod
-	def poll(self, context):
-		return not areaTypeExists("DOPESHEET_EDITOR")
-	
-	def execute(self, context):
-		openDopeSheet()
-		return{"FINISHED"}
-
-		
-# register
-#############################
-
-def register():
-	bpy.utils.register_module(__name__)
-
-def unregister():
-	bpy.utils.unregister_module(__name__)

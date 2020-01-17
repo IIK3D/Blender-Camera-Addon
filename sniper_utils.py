@@ -4,18 +4,18 @@ mail@jlucke.com
 
 Created by Jacques Lucke
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import bpy
@@ -37,19 +37,19 @@ def newText(name = "Text", location = [0, 0, 0], text = "text"):
 
 def setTrackTo(child, trackTo):
 	deselectAll()
-	child.select = True
+	child.select_set(True)
 	setActive(trackTo)
 	bpy.ops.object.track_set(type = "TRACKTO")   
 
 def setParent(child, parent):
 	deselectAll()
-	child.select = True
+	child.select_set(True)
 	setActive(parent)
 	bpy.ops.object.parent_set(type = "OBJECT", keep_transform = True)
 	
 def setParentWithoutInverse(child, parent):
 	deselectAll()
-	child.select = True
+	child.select_set(True)
 	setActive(parent)
 	bpy.ops.object.parent_no_inverse_set()
 	
@@ -92,11 +92,11 @@ def deselectAll():
 	bpy.ops.object.select_all(action = "DESELECT")
 	
 def getActive():
-	return bpy.context.scene.objects.active
+	return bpy.context.view_layer.objects.active
 	
 def setActive(object):
-	object.select = True
-	bpy.context.scene.objects.active = object
+	object.select_set(True)
+	bpy.context.view_layer.objects.active = object
 	
 def deleteSelectedObjects():
 	bpy.ops.object.delete(use_global=False)
@@ -257,7 +257,7 @@ def getSelectedObjects():
 def setSelectedObjects(selection):
 	deselectAll()
 	for object in selection:
-		object.select = True
+		object.select_set(True)
 		setActive(object)
 		
 def isTextObject(object):
@@ -268,14 +268,14 @@ def isTextObject(object):
 	
 def delete(object):
 	deselectAll()	
-	object.layers[getActiveSceneLayer()] = True
-	object.select = True
-	object.hide = False
+	find_collection(object).hide_viewport = False
+	object.select_set(True)
+	object.hide_viewport = False
 	object.name = "DELETED" + object.name
 	bpy.ops.object.delete()
 	
 def getCurrentFrame():
-	return bpy.context.screen.scene.frame_current
+	return bpy.context.scene.frame_current
 	
 def insertWiggle(object, dataPath, strength, scale):
 	object.keyframe_insert(data_path = dataPath, frame = getCurrentFrame())
@@ -323,6 +323,30 @@ def getDataPathFromPropertyName(name):
 def getObjectFromValidIndex(list, index):
 	return list[clamp(index, 0, len(list) - 1)]
 	
-def getActiveSceneLayer():
-	return bpy.context.scene.active_layer
-					
+def getActiveCollection():
+	return bpy.context.collection
+
+
+
+def find_collection(item):
+	collections = item.users_collection
+	if len(collections) > 0:
+		return collections[0]
+	return bpy.context.scene.collection
+
+
+def make_collection(collection_name, parent_collection=False):
+	if collection_name in bpy.data.collections: # Does the collection already exist?
+		return bpy.data.collections[collection_name]
+	else:
+		new_collection = bpy.data.collections.new(collection_name)
+		if parent_collection:
+			parent_collection.children.link(new_collection) # Add the new collection under a parent
+		return new_collection
+
+def mooveToCollection(obj, target_Collection, unlink=False):
+	obj_collection = find_collection(obj)
+
+	target_Collection.objects.link(obj)  # put obj in new collection
+	if unlink:
+		obj_collection.objects.unlink(obj)  # remove it from the old collection
